@@ -1,29 +1,37 @@
 ---
-# this is the config that will be loaded as default by main.py
-# Please follow the provided structure (this will ensuring all baseline follow
-# a similar configuration structure and hence be easy to customise)
+name: ???
+log_dir: ???
+num_cpus: Null
+num_gpus: Null
+ram_gb: Null
+eval_every_rounds: 100
+ray_dashboard: False
+log_to_driver: False
 
-num_clients: 10
-num_epochs: 10
+num_clients: 100
+num_epochs: 1
 batch_size: 64
-clients_per_round: 10
+clients_per_round: 5
 learning_rate: 0.01
-num_rounds: 50
-partitioning: "dirichlet"
+num_rounds: 10000
+partitioning: "label_quantity"
 dataset_name: "cifar10"
 dataset_seed: 42
-alpha: 0.5
-labels_per_client: 2 # only used when partitioning is label quantity
-momentum: 0.9
-weight_decay: 0.00001
+alpha: 0.0
+labels_per_client: 1 # only used when partitioning is label quantity
+momentum: 0.0
+weight_decay: 0.0004
+server_device: cuda
 
 client_fn:
-  _target_: niid_bench.client_fednova.gen_client_fn
+  _target_: ???
   _recursive_: False
   num_epochs: ${num_epochs}
   learning_rate: ${learning_rate}
   momentum: ${momentum}
   weight_decay: ${weight_decay}
+  batch_size: ${batch_size}
+  drop_last: False
 
 dataset:
   # dataset config
@@ -34,28 +42,31 @@ dataset:
   seed: ${dataset_seed}
   alpha: ${alpha}
   labels_per_client: ${labels_per_client}
+  fill_zero_pixel: True
 
 model:
   # model config
-  _target_: niid_bench.models.CNN
-  input_dim: 400
-  hidden_dims: [120, 84]
-  num_classes: 10
+  _target_: niid_bench.models.cnn.CNN
+  hidden_dims: [384, 192]
+  num_classes: Null
 
 strategy:
-  _target_: niid_bench.strategy.FedNovaStrategy # points to your strategy (either custom or exiting in Flower)
+  _target_: ???
   # rest of strategy config
   fraction_fit: 0.00001 # because we want the number of clients to sample on each round to be solely defined by min_fit_clients
   fraction_evaluate: 0.0
   min_fit_clients: ${clients_per_round}
   min_available_clients: ${clients_per_round}
   min_evaluate_clients: 0
-
-client:
-  # client config
-
-server_device: cpu
+  eval_every_rounds: ${eval_every_rounds}
+  save_every_rounds: ${eval_every_rounds}
 
 client_resources:
-  num_cpus: 4
-  num_gpus: 0.0
+  num_cpus: 0.0001 # let CPUs primarily be reserved for use by Ray Data if GPU present
+  num_gpus: 0.2
+
+wandb:
+  id: ${name}
+  mode: disabled
+  project: flower
+  resume: allow

@@ -1,0 +1,10 @@
+---
+defaults:
+  - base
+  - _self_
+
+client_fn:
+  _target_: niid_bench.methods.fednova.gen_client_fn
+
+strategy:
+  _target_: niid_bench.methods.fednova.FedNovaStrategy

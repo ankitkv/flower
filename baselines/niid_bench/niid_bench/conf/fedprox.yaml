@@ -1,0 +1,13 @@
+---
+defaults:
+  - base
+  - _self_
+
+mu: 0.01
+
+client_fn:
+  _target_: niid_bench.methods.fedprox.gen_client_fn
+  proximal_mu: ${mu}
+
+strategy:
+  _target_: niid_bench.methods.fedavg.ResumingFedAvg

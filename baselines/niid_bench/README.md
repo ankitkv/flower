@@ -2,7 +2,7 @@
 title: "Federated Learning on Non-IID Data Silos: An Experimental Study"
 url: https://arxiv.org/abs/2102.02079
 labels: [data heterogeneity, image classification, benchmark]
-dataset: [CIFAR-10, MNIST, Fashion-MNIST]
+dataset: [CIFAR-10, CIFAR-100]
 algorithms: [FedAvg, SCAFFOLD, FedProx, FedNova]
 ---
 
@@ -19,14 +19,14 @@ algorithms: [FedAvg, SCAFFOLD, FedProx, FedNova]
 
 **What’s implemented:** The code in this directory replicates many experiments from the aforementioned paper. Specifically, it contains implementations for four FL protocols, `FedAvg` (McMahan et al. 2017), `SCAFFOLD` (Karimireddy et al. 2019), `FedProx` (Li et al. 2018), and `FedNova` (Wang et al. 2020). The FL protocols are evaluated across various non-IID data partition strategies across clients on three image classification datasets MNIST, CIFAR10, and Fashion-mnist.
 
-**Datasets:** MNIST, CIFAR10, and Fashion-mnist from PyTorch's Torchvision
+**Datasets:** CIFAR10 and CIFAR100 from HuggingFace Datasets
 
 **Hardware Setup:** These experiments were run on a linux server with 56 CPU threads with 250 GB Ram. There are 105 configurations to run per seed and at any time 7 configurations have been run parallelly. The experiments required close to 12 hrs to finish for one seed. Nevertheless, to run a subset of configurations, such as only one FL protocol across all datasets and splits, a machine with 4-8 threads and 16 GB memory can run in reasonable time.
 
 **Contributors:** Aashish Kolluri, PhD Candidate, National University of Singapore
 
 
-## Experimental Setup
+## Experimental Setup (TODO: update)
 
 **Task:** Image classification
 
@@ -75,22 +75,14 @@ poetry shell
 You can run four algorithms `FedAvg`, `SCAFFOLD`, `FedProx`, and `FedNova`. To run any of them, use any of the corresponding config files. For instance, the following command will run with the default config provided in the corresponding configuration files.
 
 ```bash
-# Run with default config, it will run FedAvg on cpu-only mode
-python -m niid_bench.main
-# Below to enable GPU utilization by the server and the clients.
-python -m niid_bench.main server_device=cuda client_resources.num_gpus=0.2
-```
-
-To change the configuration such as dataset or hyperparameters, specify them as part of the command line arguments.
-
-```bash
-python -m niid_bench.main --config-name scaffold_base dataset_name=mnist partitioning=iid # iid
-python -m niid_bench.main --config-name fedprox_base dataset_name=mnist partitioning=dirichlet # dirichlet
-python -m niid_bench.main --config-name fednova_base dataset_name=mnist partitioning=label_quantity labels_per_client=3 # sort and partition
+# Run with default config, it will run (and resume) a FedAvg experiment named "debug" on a GPU, logging into the "logs" directory.
+python -m niid_bench.main name=debug log_dir=logs
+# You can change the FL algorithm, and global and client-wise resources available to the experiment.
+python -m niid_bench.main --config-name fedprox name=debug log_dir=logs num_cpus=4 num_gpus=1 ram_gb=16 client_resources.num_gpus=0.2
 ```
 
 
-## Expected Results
+## Expected Results (TODO: update)
 
 We provide the bash script run_exp.py that can be used to run all configurations. For instance, the following command runs all of them with 4 configurations running at the same time. Consider lowering `--num-processes` if your machine runs slow. With `--num-processes 1` one experiment will be run at a time.
 
